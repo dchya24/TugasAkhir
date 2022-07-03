@@ -45,9 +45,23 @@ def generatePicture():
     driver["kluster"] = dbscan.labels_
 
     labels = dbscan.labels_
+    n_raw = len(labels)
     n_clusters = len(set(labels)) - (1 if -1 in labels else 0)
 
     output = plt.scatter(scaled_array[:, 0], scaled_array[:, 1], s=100, c=driver.kluster, marker="o", alpha=1)
+
+    penguins = []
+    no = 1
+    for i in range(0, n_raw):
+        penguins.append({
+            "no": no,
+            "spesies": str(driver.values[i, 0]),
+            "asal": str(driver.values[i, 1]),
+            "berat": str(driver.values[i, 5]),
+            "gender": str(driver.values[i, 6]),
+            "cluster": dbscan.labels_[i]
+        })
+        no += 1
 
     plt.title("Hasil DBSCAN")
     plt.colorbar(output)
@@ -55,7 +69,8 @@ def generatePicture():
     plt.close()
 
     return {
-        "n_clusters_": n_clusters
+        "n_clusters_": n_clusters,
+        "penguins": penguins
     }
 
 def searchClusterData(cluster):

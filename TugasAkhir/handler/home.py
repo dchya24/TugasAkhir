@@ -7,7 +7,9 @@ def index(request):
 
         return render(request, "dashboard.html", {
             "clusters_count": data["n_clusters_"],
-            "clusters_range": range(data["n_clusters_"])
+            "clusters_range": range(data["n_clusters_"]),
+            "penguins": data["penguins"]
+
         })
 
 def search(request):
