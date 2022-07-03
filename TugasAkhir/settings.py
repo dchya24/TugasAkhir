@@ -32,7 +32,7 @@ ALLOWED_HOSTS = [
     "localhost"
 ]
 
-CSRF_TRUSTED_ORIGINS = ["https://tugas-akhir-datamining.herokuapp.com/"]
+CSRF_TRUSTED_ORIGINS = ['https://tugas-akhir-datamining.herokuapp.com']
 
 # Application definition
 
