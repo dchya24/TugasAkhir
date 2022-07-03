@@ -19,7 +19,8 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from TugasAkhir.handler import home
 
 urlpatterns = [
-    path('dashboard/', home.index, name="Home"),
+    path("", home.index, name="Home"),
+    path("pencarian", home.search, name="search"),
     path('admin/', admin.site.urls),
 ]
 

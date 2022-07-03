@@ -7,40 +7,39 @@
     <link rel="stylesheet" href="{% static 'bootstrap.min.css' %}">
 </head>
 <body>
-    <div class="container pt-3">
-        <h3>Implementasi Algoritma clustering dengan dbscan</h3>
-{#        <div class="w-50">#}
-{#            <img src="{% static 'data.png' %}" class="img-fluid">#}
-{#        </div>#}
-        <div class="row">
-{#            <div class="col-6">#}
-{#                <p>Jumlah cluster: {{ clusters_count }}</p>#}
-{#                <ul>#}
-{#                    {% for cluster in clusters_count %}#}
-{#                        <li>{{ cluster }}</li>#}
-{#                    {% empty %}#}
-{#                        <li>no cluster</li>#}
-{#                    {% endfor %}#}
-{#                </ul>#}
-{#            </div>#}
-            <div class="col-12 align-content-center">
-                <img src="{% static 'data.png' %}" class="img-fluid w-50">
+    <div class="container mt-5">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title">Implementasi Algoritma clustering dengan dbscan</h4>
             </div>
-
-            <div class="col-12">
-                <table class="table">
-                    <tr>
-                        <td>Nomor andorid</td>
-                        <td> Id Andorid</td>
-                    </tr>
-                    {% for data in anomali_data %}
-                        <tr>
-                            <td>{{ data.nomor_id }}</td>
-                            <td>{{ data.id_android }}</td>
-                        </tr>
-                    {% empty %}
-                    {% endfor %}
-                </table>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-6 align-content-center">
+                        <img src="{% static 'data.png' %}" class="img-fluid">
+                    </div>
+                    <div class="col-6">
+                        <h4>Terdapat {{ clusters_count }} cluster</h4>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer">
+                <form action="/pencarian" method="POST" class="row">
+                    <div class="col-7">
+                        {% csrf_token %} {# adding csrf token for form #}
+                        <label for="" class="col-form-label fw-bold">
+                            Pilih cluster yang ingin dilihat (pilih -1 jika ingin melihat data yang tidak wajar):
+                        </label>
+                    </div>
+                    <div class="col-5">
+                        <select name="cluster" id="cluster" class="form-select w-25 d-inline">
+                            <option value="-1">-1</option>
+                            {% for cluster in clusters_range %}
+                                <option value={{ cluster }}>{{ cluster }}</option>
+                            {% endfor %}
+                        </select>
+                        <button type="submit" class="btn btn-primary">Cari</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>

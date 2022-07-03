@@ -6,37 +6,48 @@ import os
 from sklearn.cluster import DBSCAN
 from sklearn.preprocessing import MinMaxScaler
 
+BASE_PATH = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 
 def init():
-    driver = pd.read_csv(os.path.dirname(__file__) +"/go_track_tracks.csv")
-    BASE_PATH = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    df = pd.read_csv(os.path.dirname(__file__) + "/penguins_size.csv")
 
-    driver_x = driver.drop(
-        ['linha', 'rating', 'time', 'car_or_bus', 'rating_weather', 'rating_bus', 'id', 'id_android'], axis=1)
+    df.isnull().sum()
 
-    x_array = np.array(driver_x)
+    df.drop(df[df['body_mass_g'].isnull()].index, axis=0, inplace=True)
+    df['sex'] = df['sex'].fillna('MALE')
+    df.drop(df[df['sex'] == '.'].index, inplace=True)
 
-    scaler = MinMaxScaler()
-    x_scaled = scaler.fit_transform(x_array)
+    df_new = df.drop(["species", "island", "flipper_length_mm", "body_mass_g", "sex"], axis=1)
 
-    dbscan = DBSCAN(eps=0.2, min_samples=5)
-    dbscan.fit(x_scaled)
+    array_df = np.array(df_new)
 
-    labels = dbscan.labels_
-    n_raw = len(labels)
-    n_clusters_ = len(set(labels)) - (1 if -1 in labels else 0)
+    scale = MinMaxScaler()
+    scaled_array = scale.fit_transform(array_df)
+
+    dbscan = DBSCAN(eps=0.05, min_samples=3)
+    dbscan.fit(scaled_array)
+
+    return {
+        "dbscan": dbscan,
+        "driver": df,
+        "scaled_array": scaled_array
+    }
     # print("Terdapat " + str(n_clusters_) + " cluster yang terbentuk")
 
-    anomali_data = []
-    for i in range(0, n_raw):
-        if (dbscan.labels_[i] == -1):
-            anomali_data.append({
-                "nomor_id": driver.values[i, 1],
-                "id_android": driver.values[i, 1]
-            })
+
+def generatePicture():
+    data = init()
+    driver = data["driver"]
+    dbscan = data["dbscan"]
+    scaled_array = data["scaled_array"]
 
     driver["kluster"] = dbscan.labels_
-    output = plt.scatter(x_scaled[:, 0], x_scaled[:, 1], s=100, c=driver.kluster, marker="o", alpha=1)
+
+    labels = dbscan.labels_
+    n_clusters = len(set(labels)) - (1 if -1 in labels else 0)
+
+    output = plt.scatter(scaled_array[:, 0], scaled_array[:, 1], s=100, c=driver.kluster, marker="o", alpha=1)
 
     plt.title("Hasil DBSCAN")
     plt.colorbar(output)
@@ -44,6 +55,30 @@ def init():
     plt.close()
 
     return {
-        "anomali_data": anomali_data,
-        "n_clusters_": n_clusters_
+        "n_clusters_": n_clusters
     }
+
+def searchClusterData(cluster):
+    data = init()
+    driver = data["driver"]
+    dbscan = data["dbscan"]
+    scaled_array = data["scaled_array"]
+
+    labels = dbscan.labels_
+    n_raw = len(labels)
+    n_clusters = len(set(labels)) - (1 if -1 in labels else 0)
+
+    penguins = []
+    no = 1
+    for i in range(0, n_raw):
+        if dbscan.labels_[i] == cluster:
+            penguins.append({
+                "no": no,
+                "spesies": str(driver.values[i, 0]),
+                "asal": str(driver.values[i, 1]),
+                "berat": str(driver.values[i, 5]),
+                "gender": str(driver.values[i, 6])
+            })
+            no += 1
+
+    return penguins
