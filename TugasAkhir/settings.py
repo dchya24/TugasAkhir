@@ -25,13 +25,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-k*vf=8iv6xeud2hs4^3um7kg1*zjp^l*pf5&m%-%mugbn)j=!@'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = [
     "https://tugas-akhir-datamining.herokuapp.com",
     "localhost"
 ]
 
+CSRF_TRUSTED_ORIGINS = ["https://tugas-akhir-datamining.herokuapp.com/"]
 
 # Application definition
 
